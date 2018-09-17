@@ -92,27 +92,18 @@
 %	MOTIVATION
 %----------------------------------------------------------------------------------------
 
-\begin{alertblock}{Motivation}
-There is a rising need for distributed computation. Currently everything is done in the cloud, but:
-\begin{itemize}
-\item Privacy issues.
-\item High execution cost.
-\item High delay.
-\end{itemize}
-There is a lot of unused computational power at the edge, but:
-\begin{itemize}
- \item Nodes do not trust one another.
- \item There are no easy mechanisms to prove result validity.
- \item There are no simple payment mechanisms. 
-\end{itemize}
+\begin{alertblock}{Abstract}
+This demo shows an implementation of a computation-centric architecture over NDN. The system is able to perform in-network load balancing of incoming computation requests, reliably authenticate consumers and allow them to submit large payloads without routable prefixes. The system is able to migrate requested function in a form of unikernels where they are needed, follows ICN pull-based model and introduces only minimal changes to the NDN stack.
+
 
 
 \end{alertblock}
 
 \begin{block}{Actors}
  \begin{itemize}
-  \item[] \includegraphics[width=0.09\linewidth]{img/user} \textbf{Requestor} - submits tasks to the system
-  \item[] \includegraphics[width=0.07\linewidth]{img/pi} \textbf{Execution Node} - executes tasks
+  \item[] \includegraphics[width=0.09\linewidth]{img/user} \textbf{Requestor} - submits tasks to the system. Requestor submits images for text recognition
+  \item[] \includegraphics[width=0.07\linewidth]{img/pi} \textbf{Execution Node} - executes tasks. Execution Node accepts images, performs OCR algorithm and send back recognized text. 
+  \item[] \includegraphics[width=0.07\linewidth]{img/ap} \textbf{Access Point} - performs load balancinf. Access Point implements a simple Round-Robin forwarding strategy to distribute tasks between workers. 
  \end{itemize}
 
 \end{block}
@@ -123,27 +114,18 @@ There is a lot of unused computational power at the edge, but:
 %	INTRODUCTION
 %----------------------------------------------------------------------------------------
 
-\begin{block}{Technologies}
-\textbf{Intel SGX}
+\begin{block}{Design Goals}
+
   \begin{itemize}
-    \item Creates \emph{enclaves} that are protected by the CPU against access from other OS/Hypervisor
-    \item Remote Attestation Protocol
-    \begin{itemize}
-      \item Verifies the code running on a remote node
-      \item Allows secure communication with the enclave
-    \end{itemize}
+    \item Authenticate consumers
+    \item Large parameter submission (submit a picture)
+    \item In-network load balancing between multiple workers
+    \item Handle PIT expiry problem when generating content
+    \item Result Caching
+    \item Function Migration
+    
   \end{itemize}
-  
-\textbf{Blockchain}
-  \begin{itemize}
-  \item Immutable, Distributed Ledger
-  \item Smart Contracts
-    \begin{itemize}
-      \item Allow to logic on top of a blockchain
-      \item Turing complete language (Solidity)
-      \item Submitted data is publicly visible
-    \end{itemize}
-  \end{itemize}
+ 
 \end{block}
 
 %----------------------------------------------------------------------------------------
@@ -158,7 +140,32 @@ There is a lot of unused computational power at the edge, but:
 \includegraphics[width=1\linewidth]{img/scenario}
 \end{figure}
 
-\noindent\rule{55cm}{0.4pt}
+%\noindent\rule{55cm}{0.4pt}
+
+\vspace{50pt}
+
+\begin{columns}
+\begin{column}{\onecolwid}
+\begin{block}{4-way Handshake}
+\begin{figure}
+\includegraphics[width=1\linewidth]{img/handshake}
+\end{figure}
+
+
+\end{block}
+
+\end{column}
+
+\begin{column}{\onecolwid}
+\begin{block}{Thunks}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{img/thunks}
+\end{figure}
+\end{block}
+\end{column}
+
+\end{columns}
+
 
 
 \end{column} % End of the second column
@@ -171,15 +178,17 @@ There is a lot of unused computational power at the edge, but:
 %	CONCLUSION
 %----------------------------------------------------------------------------------------
 
-\begin{block}{Design Goals}
+\begin{block}{Test it yourself}
 \begin{itemize}
- \item \textbf{Openness} - everyone can join the system and submit or execute tasks. 
- \item \textbf{Incentives} - \emph{Execution Nodes} are paid for their work. 
- \item \textbf{Result Integrity} - \emph{Requestors} are sure that the returned result is correct.
- \item \textbf{Input/Output Privacy} - input parameters and result data are visible only to the \emph{Requestor} and hidden from the \emph{Execution Node}. 
+ \item Our application is available on Google PlayStore for Android phones.
+ \item \url{https://play.google.com/store/apps/details?id=uk.ac.ucl.ndnocr}
 \end{itemize}
 
+\begin{figure}
+\includegraphics[width=0.5\linewidth]{img/qr}
+\end{figure}
 \end{block}
+
 
 
 %----------------------------------------------------------------------------------------
@@ -189,15 +198,18 @@ There is a lot of unused computational power at the edge, but:
 \setbeamercolor{block alerted title}{fg=black,bg=norange} % Change the alert block title colors
 \setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
 
-\begin{alertblock}{Results}
-
+\begin{alertblock}{Results\&Future Work}
+\textbf{Results}
 \begin{itemize}
-\item A prototype running on Ethereum Test Network. 
-\item Orders of magnitude less overhead than the State of the Art.
-\item Fully automated payments and result verification. 
-\item Operating cost lower than $1\$$.
-\item No 3rd parties involved. 
-\item Secure against rational attacker. 
+\item An Android application available on PlayStore.
+\item No limits on the size of submitted images.
+\item In-network load balncing using a simple forwarding strategy. 
+\end{itemize}
+\textbf{Future Work}
+\begin{itemize}
+\item Extend the system to use phones as workers.
+\item Fully decentralized p2p network.
+\item More advanced forwarding strategies for traffic shaping. 
 \end{itemize}
 
 \end{alertblock}
@@ -208,10 +220,9 @@ There is a lot of unused computational power at the edge, but:
 
 \begin{block}{Current Limitations}
 \begin{itemize}
- \item Delay imposed by the blockchain (few minutes).
- \item Function size limited to 100MB. 
- \item Requires Intel hardware. 
- \item Not secure against arbitrary attacker. 
+ \item Requires accurate computation time estimation for optimal performance
+ \item Overestimation increases the delay
+ \item Underestimation increases the overhead
 \end{itemize}
 
 \end{block}
